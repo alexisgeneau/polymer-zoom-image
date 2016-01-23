@@ -1,0 +1,142 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <polymer-zoom-image preview="../img_thumb.png" full="../img_full.png" alt="img" prev-width="200">
+    </polymer-zoom-image>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="polymer-zoom-image">
+    <template>
+        <style>
+            :host {
+                display: block;
+                box-sizing: border-box;
+            }
+
+            #zoom {
+                overflow: hidden;
+                position: absolute;
+                visibility: hidden;
+            }
+
+            #full {
+                position: absolute;
+            }
+        </style>
+        <img src$="[[preview]]" width$="[[prevWidth]]" height$="[[prevHeight]]" alt$="[[alt]]"
+             on-mousemove="_onMouseMove"
+             id="preview" on-mouseout="_hideFull" on-mouseenter="_showFull">
+
+        <div id="zoom" style$="width:[[boxWidth]]px;height:[[boxHeight]]px;">
+            <img src$="[[full]]" id="full" alt$="full-[[alt]]" on-load="_fullImageLoaded">
+        </div>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'polymer-zoom-image',
+
+            properties: {
+                full: {
+                    type: String,
+                    value: ''
+                },
+                prevWidth: {
+                    type: Number
+                },
+                prevHeight: {
+                    type: Number
+                },
+                boxWidth: {
+                    type: Number,
+                    value: 200
+                },
+                boxHeight: {
+                    type: Number,
+                    value: 250
+                },
+                preview: {
+                    type: String,
+                    value: ''
+                },
+                alt: {
+                    type: String,
+                    value: ''
+                }
+            },
+            attached: function () {
+                this.$.zoom.style.top = this.$.preview.offsetTop + 'px';
+                this.$.zoom.style.left = this.$.preview.offsetLeft + this.$.preview.width + 10 + 'px';
+            },
+
+            _fullImageLoaded: function () {
+                this.$.full.style.left = (-0.5 * this.$.full.width) + (0.5 * this.$.zoom.offsetWidth) + 'px';
+                this.$.full.style.top = (-0.5 * this.$.full.height) + (0.5 * this.$.zoom.offsetHeight) + 'px';
+            },
+            _onMouseMove: function (e) {
+                var x = this.$.preview.width / 2;
+                var y = this.$.preview.height / 2;
+                var ratioX = ((x - e.offsetX) / this.$.preview.width) * this.$.full.width;
+                var ratioY = ((y - e.offsetY) / this.$.preview.height) * this.$.full.height;
+                var isXin = this.checkIsXIn(
+                        this.$.full.offsetLeft + ratioX, //a1x
+                        this.$.full.offsetLeft + ratioX + this.$.full.width, //a2x
+                        0, //b1x
+                        this.$.zoom.offsetWidth //b2x
+                );
+                var isYin = this.checkIsYIn(
+                        this.$.full.offsetTop + ratioY, //a1y
+                        this.$.full.offsetTop + ratioY + this.$.full.height, //a2y
+                        0, //b1y
+                        this.$.zoom.offsetHeight //b2y
+                );
+                if (!isXin) {
+                    if (this.$.full.offsetLeft + ratioX + this.$.full.width - this.$.zoom.offsetWidth > 0) {
+                        ratioX = this.$.full.width / 2 - this.$.zoom.offsetWidth / 2;
+                    } else {
+                        ratioX = -(this.$.full.width / 2 - this.$.zoom.offsetWidth / 2);
+                    }
+                }
+                if (!isYin) {
+                    if (this.$.full.offsetTop + ratioY + this.$.full.height - this.$.zoom.offsetHeight > 0) {
+                        ratioY = this.$.full.height / 2 - this.$.zoom.offsetHeight / 2;
+                    } else {
+                        ratioY = -(this.$.full.height / 2 - this.$.zoom.offsetHeight / 2);
+                    }
+                }
+                this.transform('translate(' + ratioX + 'px,' + ratioY + 'px)', this.$.full);
+            },
+            _showFull: function () {
+                this.$.zoom.style.visibility = 'visible';
+            },
+            _hideFull: function () {
+                this.$.zoom.style.visibility = 'hidden';
+            },
+            checkIsXIn: function (a1x, a2x, b1x, b2x) {
+                return a1x <= b1x && b2x <= a2x;
+            },
+            checkIsYIn: function (a1y, a2y, b1y, b2y) {
+                return a1y <= b1y && b2y <= a2y;
+            }
+
+        });
+    </script>
+</dom-module>

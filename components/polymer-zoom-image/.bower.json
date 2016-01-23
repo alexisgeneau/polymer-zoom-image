@@ -1,0 +1,37 @@
+{
+  "name": "polymer-zoom-image",
+  "authors": [
+    "Alexisgeneau <contact@alexis-geneau.fr>"
+  ],
+  "description": "An element providing a solution to no problem in particular.",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "seed",
+    "web-components"
+  ],
+  "main": "polymer-zoom-image.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/alexisgeneau/seed-element/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "^3.4.0"
+  },
+  "_release": "07dfd11530",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "07dfd11530424cf273957fe3722fa52acee43331"
+  },
+  "_source": "git://github.com/alexisgeneau/polymer-zoom-image.git",
+  "_target": "master",
+  "_originalSource": "alexisgeneau/polymer-zoom-image",
+  "_direct": true
+}
